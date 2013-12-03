@@ -3,14 +3,10 @@
 import os,sys
 import django.core.handlers.wsgi
 
-# put virtualenv on pythonpath # from chip_demo by rohit sankar
-# import site
-#site.addsitedir('{{ paths.sites }}/{{ site_name }}/lib/python{{ python_version }}/site-packages')
-#site.addsitedir('{{ paths.sites }}/{{ site_name }}/src/src_{{ project_name }}')
  
  
-project_root='${PROJECT_ROOT}'
-site_name='${SITE_NAME}'
+project_root='{{ PROJECT_ROOT }}'
+site_name='{{ PROJECT_NAME }}'
 site_root=project_root + '/' + site_name
 
 # redirect print statements to apache log

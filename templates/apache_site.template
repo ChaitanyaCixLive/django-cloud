@@ -12,7 +12,7 @@
     WSGIProcessGroup {{ SITE_NAME }}
     WSGIScriptAlias / {{ APACHE_DIR }}/django.wsgi
 
-    <Directory $PROJECT_ROOT/$SITE_NAME>
+    <Directory {{ PROJECT_ROOT }}/{{ PROJECT_NAME }}>
         Order deny,allow
         Allow from all
     </Directory>
@@ -20,8 +20,8 @@
 #TODO -> check if a directory allow,deny tag is reqd. for apache2 directory
 #TODO -> ADD STATIC URL
 
-    Alias $MEDIA_URL $PROJECT_ROOT/media/
-    <Directory $PROJECT_ROOT/media>
+    Alias {{ MEDIA_URL }} {{ PROJECT_ROOT }}/media/
+    <Directory {{ PROJECT_ROOT }}/media>
         Order deny,allow
         Allow from all
     </Directory>
