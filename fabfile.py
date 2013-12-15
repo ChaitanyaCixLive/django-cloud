@@ -1,41 +1,49 @@
+__author__ = 'deepak'
 
 import os
+import sys
 from fabric.api import *
-from fabric.contrib.files import exists, upload_template
+from fabric.contrib.files import upload_template
+
 
 PROJECT_NAME = 'techvolunteer'
 DOMAIN_NAME = 'completestack.net'
-PROJECT_ROOT = '/home/ubuntu'
+PROJECT_ROOT = '/home/ubuntu/techvolunteerproject'
 ADMIN_EMAIL = 'deepakgarg.iitg@gmail.com'
 PROJECT_APACHE_DIR = os.path.join(PROJECT_ROOT, 'apache2')
+STATIC_URL = '/static/'
 
-def initParam():
-    host = 'host-address'
-    password = ''
-    user = 'ubuntu'
-    key_file = 'path/to/keyfile'
-    setup(host=host, user=user, password=password, key_file=key_file)
-    
-def setup(host='devvm', user='ubuntu', password='', key_file='/home/deepak/.ssh/id_rsa'):
+def setupHost(hostAddress='', user='', password='', key_file=''):
+    sys.path.append(os.getcwd())
+    try:
+        import configproperties  #properties file containing default values
+        if hostAddress is '':
+            hostAddress=configproperties.hostIP
+        if user is '':
+            user=configproperties.userName
+        if key_file is '':
+            key_file=configproperties.key_path
+    except Exception as ex:
+        print('Default file named "configproperties" is not present')
     if password:
         env.password = password
     env.key_filename = key_file
     #TODO Check for key_file path
-    env.host_string = host 
+    env.host_string = hostAddress
     env.user = user
 
 def start():
-    initParam()
+    setupHost()
     prepare_prod()
 
 def usage():
-    print 'fab start \nor\nfab setup:host=<hostname>,user=<username>,key_file=<path-to-keyfile>'
+    print('fab start \nor\nfab setup:host=<hostname>,user=<username>,key_file=<path-to-keyfile>')
 
 def prepare_prod():
     install_baseline()
     install_py()
     create_directories()
-    basic_django()
+    #basic_django()
     install_apache()
     configure_apache()
     configure_wsgi()
@@ -57,6 +65,7 @@ def create_directories():
     path = PROJECT_ROOT + '/{media,apache2}'
     run('mkdir -p ' + path )
 
+
 def basic_django():
     with cd(PROJECT_ROOT):
         run('django-admin startproject ' + PROJECT_NAME)
@@ -74,7 +83,7 @@ def configure_apache():
                 'APACHE_DIR': PROJECT_APACHE_DIR,
                 'PROJECT_ROOT': PROJECT_ROOT,
                 'PROJECT_NAME': PROJECT_NAME,
-                'MEDIA_URL': PROJECT_ROOT + '/media'  #todo - refactor
+                'STATIC_URL': STATIC_URL
         }
     upload_template(filename='apache_site.template',
                                      destination=dest,
