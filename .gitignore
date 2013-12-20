@@ -1,3 +1,5 @@
 
+id_rsa
+config.json
 configproperties.py
 *.pyc
