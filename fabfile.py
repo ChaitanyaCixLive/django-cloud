@@ -46,7 +46,6 @@ def prepare_prod():
     install_py()
     install_mysql()
     create_directories()
-    #basic_django()
     install_apache()
     configure_apache()
     configure_wsgi()
@@ -59,12 +58,12 @@ def install_baseline():
     sudo('apt-get install -y git-core build-essential curl vim')
 
 def install_py():
-    sudo(' apt-get install -y pep8 python python3 python-setuptools python-dev \
+    sudo(' apt-get install -y pep8 python python-setuptools python-dev \
         python-pip')
-    # TODO - install specific version of django
-    sudo(' apt-get install -y python-django')
-    sudo('pip install virtualenv')
     sudo('apt-get install -y python-mysqldb')
+    # TODO - install specific version of django
+    # sudo(' apt-get install -y python-django')
+    # sudo('pip install virtualenv')
     #sudo('apt-get install sqlite3')
 
 def install_mysql():
@@ -77,11 +76,6 @@ def install_mysql():
 
 def create_directories():
     run('mkdir -p ' + PROJECT_APACHE_DIR )
-
-
-def basic_django():
-    with cd(PROJECT_PATH):
-        run('django-admin startproject ' + PROJECT_NAME)
 
 def install_apache():
     sudo('apt-get install -y apache2 libapache2-mod-wsgi')
@@ -108,7 +102,7 @@ def configure_apache():
 def configure_wsgi():
     cwd = os.getcwd()
     temdir = os.path.join(cwd,'templates')
-    dest = os.path.join(PROJECT_APACHE_DIR, 'django.wsgi')
+    dest = os.path.join(PROJECT_APACHE_DIR, PROJECT_NAME + '.wsgi')
     context = {
             'PROJECT_ROOT': PROJECT_PATH,
             'PROJECT_NAME': PROJECT_NAME
@@ -123,40 +117,31 @@ def configure_wsgi():
 def download_code():
     ubuntu_home = '/home/ubuntu/'
     ssh_dir = ubuntu_home + '.ssh/'
+    temdir = os.path.join(os.getcwd(),'templates')
     run('mkdir -p ' + ssh_dir )
+
     upload_template(filename='/home/deepak/.ssh/id_rsa',
                      destination=ssh_dir)
-    upload_template(filename='/home/deepak/.ssh/config',
+    upload_template(filename=os.path.join(temdir, 'config'),
                     destination=ssh_dir)
     repo_name = PROJECT_PATH.split('/')[3]
     bitbucket_git_repo = 'ssh://git@bitbucket.org/deepakgarg/' + repo_name + '.git'
-    context = {
-       'PROJECT_PATH': PROJECT_PATH,
-       'bitbucket_git_repo': bitbucket_git_repo
-    }
     run('chmod 400 ' + ssh_dir + 'id_rsa')
-    upload_template(filename='getcode.sh',
-                 destination=ubuntu_home,
-                 use_jinja=True,
-                 context=context,
-                 template_dir=os.getcwd(),
-                 use_sudo=False)
     with cd(ubuntu_home):
-        run('source getcode.sh')
+        run('git clone ' + bitbucket_git_repo)
+    with cd( PROJECT_PATH ):
+        run('git pull origin master')
+        sudo('pip install -r pip.txt')
+        #run('python manage.py syncdb') #todo - syncdb
 
-    #bitbucket_http_repo = 'https://bitbucket.org/deepakgarg/' + repo_name
-    #run('eval `ssh-agent -s`')
-    ##run('ssh-add')
-    #with cd('/home/ubuntu'):
-    #    run('git clone ' + bitbucket_http_repo)
-    #with cd(PROJECT_PATH):
-    #    run('git remote remove origin')
-    #    run('git remote add origin ' + bitbucket_git_repo)
-    #    run('git pull origin master')
 
 def activate_apache():
-    sudo('a2dissite default')
+    sudo('a2dissite 000-default.conf')
     sudo('a2ensite ' + DOMAIN_NAME)
     sudo('/etc/init.d/apache2 reload')
+    #for anniecreative do:
+#    cd /var/www/media
+#chgrp -R www-data geekingreen/
+#chmod -R g+w geekingreen/
 
 

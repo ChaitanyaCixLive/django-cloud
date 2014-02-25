@@ -1,0 +1,9 @@
+Host github.com
+  HostName github.com
+  IdentityFile /home/ubuntu/.ssh/id_rsa
+  StrictHostKeyChecking no
+
+Host bitbucket.org
+  HostName bitbucket.org
+  IdentityFile /home/ubuntu/.ssh/id_rsa
+  StrictHostKeyChecking no
