@@ -48,7 +48,6 @@ def prepare_prod():
     create_directories()
     install_apache()
     configure_apache()
-    configure_wsgi()
     download_code()
     activate_apache()
         
@@ -99,20 +98,6 @@ def configure_apache():
                                      template_dir=temdir,
                                      use_sudo=True)
 
-def configure_wsgi():
-    cwd = os.getcwd()
-    temdir = os.path.join(cwd,'templates')
-    dest = os.path.join(PROJECT_APACHE_DIR, PROJECT_NAME + '.wsgi')
-    context = {
-            'PROJECT_ROOT': PROJECT_PATH,
-            'PROJECT_NAME': PROJECT_NAME
-    }
-    upload_template(filename='django.wsgi.template',
-                     destination=dest,
-                     use_jinja=True,
-                     context=context,
-                     template_dir=temdir,
-                     use_sudo=True)
 
 def download_code():
     ubuntu_home = '/home/ubuntu/'

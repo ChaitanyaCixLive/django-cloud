@@ -6,17 +6,15 @@
     LogLevel warn
     ErrorLog {{ APACHE_DIR }}/{{ SITE_NAME }}_error.log
     CustomLog {{ APACHE_DIR }}/{{ SITE_NAME }}_access.log combined
-    #python-path=/home/$LOCAL_USER/env/lib/python2.6/site-packages  #todo -> fix it
-    
+
     WSGIDaemonProcess {{ SITE_NAME }} user=www-data group=www-data maximum-requests=10000 
+    #python-path=   #pass the venv python path
+
     WSGIProcessGroup {{ SITE_NAME }}
-    WSGIScriptAlias / {{ APACHE_DIR }}/{{ PROJECT_NAME }}.wsgi
-
-
-    #TODO - check if this config is reqd.
+    WSGIScriptAlias / {{ PROJECT_ROOT }}/{{ PROJECT_NAME }}/wsgi.py
+    #giving access to Apache for the wsgi.py file
     <Directory {{ PROJECT_ROOT }}/{{ PROJECT_NAME }}>
-        Order deny,allow
-        Allow from all
+        Require all granted
     </Directory>
 
 
