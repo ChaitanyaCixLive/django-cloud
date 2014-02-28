@@ -20,7 +20,6 @@
 
     Alias {{ STATIC_URL }} {{ STATIC_DIR }}
     <Directory {{ STATIC_DIR }}>
-        Order deny,allow
-        Allow from all
+       Require all granted
     </Directory>
 </VirtualHost>
