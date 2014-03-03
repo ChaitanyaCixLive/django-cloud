@@ -82,7 +82,8 @@ def install_apache():
 def configure_apache():
     cwd = os.getcwd()
     temdir = os.path.join(cwd,'templates')
-    dest = os.path.join('/etc/apache2/sites-available', DOMAIN_NAME)
+    apache_file_name = DOMAIN_NAME.split('.')[0] + '.conf'
+    dest = os.path.join('/etc/apache2/sites-available', apache_file_name)
     context = { 'SITE_NAME': DOMAIN_NAME,
                 'ADMIN_EMAIL': ADMIN_EMAIL,
                 'APACHE_DIR': PROJECT_APACHE_DIR,
@@ -122,7 +123,7 @@ def download_code():
 
 def activate_apache():
     sudo('a2dissite 000-default.conf')
-    sudo('a2ensite ' + DOMAIN_NAME)
+    sudo('a2ensite ' + DOMAIN_NAME.split('.')[0])
     sudo('/etc/init.d/apache2 reload')
     #for anniecreative do:
 #    cd /var/www/media
