@@ -7,8 +7,7 @@
     ErrorLog {{ APACHE_DIR }}/{{ SITE_NAME }}_error.log
     CustomLog {{ APACHE_DIR }}/{{ SITE_NAME }}_access.log combined
 
-    WSGIDaemonProcess {{ SITE_NAME }} user=www-data group=www-data maximum-requests=10000 
-    #python-path=   #pass the venv python path
+    WSGIDaemonProcess {{ SITE_NAME }} user=www-data group=www-data maximum-requests=10000 python-path= {{ PROJECT_ROOT }}
 
     WSGIProcessGroup {{ SITE_NAME }}
     WSGIScriptAlias / {{ PROJECT_ROOT }}/{{ PROJECT_NAME }}/wsgi.py
