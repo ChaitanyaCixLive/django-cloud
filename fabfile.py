@@ -39,7 +39,7 @@ def deploy(environ='personalweb'):
     prepare_prod()
 
 def usage():
-    print('fab start:environ="<environment-name>"')
+    print('fab deploy:environ="<environment-name>"')
 
 def prepare_prod():
     install_baseline()
@@ -61,7 +61,7 @@ def install_py():
         python-pip')
     sudo('apt-get install -y python-mysqldb')
     # TODO - install specific version of django
-    # sudo(' apt-get install -y python-django')
+    sudo(' apt-get install -y python-django')
     # sudo('pip install virtualenv')
     #sudo('apt-get install sqlite3')
 
@@ -117,14 +117,14 @@ def download_code():
         run('git clone ' + bitbucket_git_repo)
     with cd( PROJECT_PATH ):
         run('git pull origin master')
-        sudo('pip install -r pip.txt')
+        sudo('pip install -r pip.txt') #todo don't do this step for personalweb environment
         #run('python manage.py syncdb') #todo - syncdb
 
 
 def activate_apache():
     sudo('a2dissite 000-default.conf')
     sudo('a2ensite ' + DOMAIN_NAME.split('.')[0])
-    sudo('/etc/init.d/apache2 reload')
+    sudo('sudo service apache2 reload')
     #for anniecreative do:
 #    cd /var/www/media
 #chgrp -R www-data geekingreen/
